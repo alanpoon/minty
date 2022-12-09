@@ -3,7 +3,7 @@ node_modules
 minty-deployment.json
 config/default.env
 .env
-
+t.txt
 #Hardhat files
 cache
 artifacts

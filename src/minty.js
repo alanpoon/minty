@@ -2,10 +2,9 @@ const fs = require('fs/promises')
 const path = require('path')
 
 const CID = require('cids')
-const ipfsClient = require('ipfs-http-client')
+const { create: createIpfsClient } = require('ipfs-http-client')
 const all = require('it-all')
-const uint8ArrayConcat = require('uint8arrays/concat')
-const uint8ArrayToString = require('uint8arrays/to-string')
+const uint8arrays =require('uint8arrays')
 const {BigNumber} = require('ethers')
 
 
@@ -64,7 +63,7 @@ class Minty {
         this.contract = await this.hardhat.ethers.getContractAt(abi, address)
 
         // create a local IPFS node
-        this.ipfs = ipfsClient(config.ipfsApiUrl)
+        this.ipfs = createIpfsClient(config.ipfsApiUrl)
 
         this._initialized = true
     }
@@ -341,7 +340,7 @@ class Minty {
      */
     async getIPFS(cidOrURI) {
         const cid = stripIpfsUriPrefix(cidOrURI)
-        return uint8ArrayConcat(await all(this.ipfs.cat(cid)))
+        return uint8arrays.concat(await all(this.ipfs.cat(cid)))
     }
 
     /**
@@ -352,7 +351,7 @@ class Minty {
      */
     async getIPFSString(cidOrURI) {
         const bytes = await this.getIPFS(cidOrURI)
-        return uint8ArrayToString(bytes)
+        return uint8arrays.toString(bytes)
     }
 
     /**
@@ -363,7 +362,7 @@ class Minty {
      */
     async getIPFSBase64(cidOrURI) {
         const bytes = await this.getIPFS(cidOrURI)
-        return uint8ArrayToString(bytes, 'base64')
+        return uint8Array.toString(bytes, 'base64')
     }
 
     /**
@@ -374,6 +373,8 @@ class Minty {
      */
     async getIPFSJSON(cidOrURI) {
         const str = await this.getIPFSString(cidOrURI)
+        console.log("..",cidOrURI);
+        console.log("str",str);
         return JSON.parse(str)
     }
 
